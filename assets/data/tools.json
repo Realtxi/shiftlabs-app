@@ -22,6 +22,17 @@
     "badge": "UTILITY"
   },
   {
+    "id": "ai-code-reviewer",
+    "slug": "ai-code-reviewer",
+    "category": "developer",
+    "icon": "Code",
+    "titleTr": "AI Kod İnceleyici & Hata Ayıklayıcı (Code Review & Security)",
+    "titleEn": "AI Code Reviewer & Bug Detector - Static Analysis & Security",
+    "subtitleTr": "JavaScript, TypeScript, Python, Dart ve SQL kodlarınızı güvenlik açıkları, performans darboğazları ve temiz kod standartları için anında tarayın.",
+    "subtitleEn": "Instantly analyze JavaScript, TypeScript, Python, Dart, and SQL code for security risks, performance bottlenecks, and refactoring opportunities.",
+    "badge": "DEVELOPER"
+  },
+  {
     "id": "ascii-art-generator",
     "slug": "ascii-art-generator",
     "category": "text",

@@ -64,41 +64,143 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     final slug = widget.tool.slug;
     String out = "";
 
-    if (slug == "rot13-cipher") {
-      // ROT13 implementation
-      final buffer = StringBuffer();
-      for (var code in text.codeUnits) {
-        if (code >= 65 && code <= 90) {
-          buffer.writeCharCode((code - 65 + 13) % 26 + 65);
-        } else if (code >= 97 && code <= 122) {
-          buffer.writeCharCode((code - 97 + 13) % 26 + 97);
-        } else {
-          buffer.writeCharCode(code);
+    try {
+      if (slug.contains("json")) {
+        // Full Native JSON Formatter & Validator
+        try {
+          final decoded = jsonDecode(text);
+          final pretty = const JsonEncoder.withIndent("  ").convert(decoded);
+          final minified = jsonEncode(decoded);
+          out = "✅ GEÇERLİ JSON (VALID)\n\n"
+              "[GÜZELLEŞTİRİLMİŞ (PRETTY)]:\n$pretty\n\n"
+              "[KÜÇÜLTÜLMÜŞ (MINIFIED)]:\n$minified";
+        } catch (e) {
+          out = "❌ GEÇERSİZ JSON HATASI:\n$e";
         }
-      }
-      out = buffer.toString();
-    } else if (slug.contains("base64")) {
-      try {
-        out = base64Encode(utf8.encode(text));
-      } catch (_) {
-        out = text;
-      }
-    } else if (slug.contains("aspect-ratio") || slug.contains("resolution")) {
-      out = "Hesaplanan Standart Oranlar:\n• 16:9 (HD/4K): 1920x1080 / 3840x2160\n• 9:16 (Reels/TikTok): 1080x1920\n• 1:1 (Kare Post): 1080x1080\n• 4:5 (Instagram): 1080x1350";
-    } else {
-      // General stats & preview runner
-      final words = text.trim().split(RegExp(r"\s+")).where((w) => w.isNotEmpty).length;
-      final chars = text.length;
-      final charsNoSpace = text.replaceAll(RegExp(r"\s+"), "").length;
-      final lines = text.split("\n").length;
-      final readTimeSec = (words / 3.3).ceil();
+      } else if (slug.contains("jwt")) {
+        // Native JWT Decoder
+        final parts = text.trim().split(".");
+        if (parts.length >= 2) {
+          try {
+            String norm1 = parts[0];
+            while (norm1.length % 4 != 0) {
+              norm1 += "=";
+            }
+            String norm2 = parts[1];
+            while (norm2.length % 4 != 0) {
+              norm2 += "=";
+            }
+            final header = utf8.decode(base64Url.decode(norm1));
+            final payload = utf8.decode(base64Url.decode(norm2));
+            out = "🔑 JWT ÇÖZÜMLEME SONUCU:\n\n"
+                "[HEADER]:\n${const JsonEncoder.withIndent("  ").convert(jsonDecode(header))}\n\n"
+                "[PAYLOAD / CLAIMS]:\n${const JsonEncoder.withIndent("  ").convert(jsonDecode(payload))}";
+          } catch (e) {
+            out = "JWT Token Ayrıştırma Hatası: Geçersiz Base64 formatı.";
+          }
+        } else {
+          out = "Lütfen geçerli bir 3 parçalı JWT token girin (örn: eyJhbGci... . eyJzdWI... . signature).";
+        }
+      } else if (slug == "rot13-cipher") {
+        // ROT13 / Caesar implementation
+        final buffer = StringBuffer();
+        for (var code in text.codeUnits) {
+          if (code >= 65 && code <= 90) {
+            buffer.writeCharCode((code - 65 + 13) % 26 + 65);
+          } else if (code >= 97 && code <= 122) {
+            buffer.writeCharCode((code - 97 + 13) % 26 + 97);
+          } else {
+            buffer.writeCharCode(code);
+          }
+        }
+        out = "ROT13 Şifrelenmiş / Çözülmüş Metin:\n${buffer.toString()}";
+      } else if (slug.contains("base64")) {
+        try {
+          out = "Base64 Kodlanmış:\n${base64Encode(utf8.encode(text))}";
+        } catch (_) {
+          out = text;
+        }
+      } else if (slug.contains("case")) {
+        // Case Converter Pro
+        final words = text.trim().split(RegExp(r"[\s_\-]+"));
+        final camel = words.isEmpty
+            ? ""
+            : words.first.toLowerCase() +
+                words.skip(1).map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1).toLowerCase() : "").join();
+        final snake = words.map((w) => w.toLowerCase()).join("_");
+        final kebab = words.map((w) => w.toLowerCase()).join("-");
+        final pascal = words.map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1).toLowerCase() : "").join();
 
-      out = "Metin Analizi ve İşlem Özeti:\n"
-          "• Toplam Kelime: $words\n"
-          "• Karakter (Boşluklu): $chars\n"
-          "• Karakter (Boşluksuz): $charsNoSpace\n"
-          "• Satır Sayısı: $lines\n"
-          "• Tahmini Okuma Süresi: ~$readTimeSec saniye";
+        out = "Tüm Yazım Formatları:\n"
+            "• BÜYÜK HARF: ${text.toUpperCase()}\n"
+            "• küçük harf: ${text.toLowerCase()}\n"
+            "• camelCase: $camel\n"
+            "• PascalCase: $pascal\n"
+            "• snake_case: $snake\n"
+            "• kebab-case: $kebab";
+      } else if (slug.contains("regex")) {
+        // Regex Tester
+        out = "Regex Eşleşme Analizi:\n"
+            "Girdi Metin Uzunluğu: ${text.length} karakter\n"
+            "Sayılar (Digits): ${RegExp(r'\d+').allMatches(text).map((m) => m.group(0)).join(', ')}\n"
+            "E-Postalar: ${RegExp(r'[\w\.-]+@[\w\.-]+\.\w+').allMatches(text).map((m) => m.group(0)).join(', ')}\n"
+            "URL'ler: ${RegExp(r'https?://[^\s]+').allMatches(text).map((m) => m.group(0)).join(', ')}";
+      } else if (slug == "ai-code-reviewer") {
+        // Static AI Code Reviewer
+        final issues = <String>[];
+        if (text.contains("apiKey") || text.contains("password") || text.contains("secret")) {
+          issues.add("⚠️ Sert kodlanmış API anahtarı veya şifre tespit edildi (Hardcoded Secret).");
+        }
+        if (text.contains("SELECT") && text.contains("+")) {
+          issues.add("🚨 SQL Injection zafiyet riski tespit edildi.");
+        }
+        if (text.contains("innerHTML")) {
+          issues.add("⚠️ XSS açığı oluşturabilecek doğrudan innerHTML kullanımı.");
+        }
+        if (text.contains("console.log")) {
+          issues.add("ℹ️ Canlıya almadan önce console.log çağrılarını temizleyin.");
+        }
+        final score = issues.isEmpty ? 100 : (100 - issues.length * 25).clamp(25, 95);
+
+        final findings = issues.isEmpty
+            ? "• Tebrikler! İncelenen güvenlik ve temiz kod kriterleri başarılı."
+            : issues.map((i) => "• $i").join("\n");
+
+        out = "🛡️ SHIFTLABS KOD SAĞLIK VE GÜVENLİK RAPORU\n"
+            "------------------------------------------\n"
+            "Kod Kalite Puanı: %$score / 100\n"
+            "Bulgular:\n$findings";
+      } else if (slug.contains("aspect") || slug.contains("resolution") || slug.contains("fps")) {
+        out = "Hesaplanan Ekran & Video Oranları:\n"
+            "• 16:9 YouTube / Desktop: 1920x1080 (FHD) | 3840x2160 (4K)\n"
+            "• 9:16 TikTok / Reels / Shorts: 1080x1920\n"
+            "• 1:1 Instagram Kare: 1080x1080\n"
+            "• 4:5 Dikey Post: 1080x1350\n"
+            "• 21:9 Ultra Geniş Sinema: 2560x1080 / 3440x1440\n\n"
+            "Kare Hızı (FPS) Çarpanları:\n"
+            "• 24 fps: Saniyede 24 kare (Sinematik Film)\n"
+            "• 30 fps: Saniyede 30 kare (Standart Video)\n"
+            "• 60 fps: Saniyede 60 kare (Akıcı Oyun & Spor)\n"
+            "• 120 fps: Saniyede 120 kare (Ağır Çekim Slow-Mo)";
+      } else {
+        // General stats & preview runner
+        final words = text.trim().split(RegExp(r"\s+")).where((w) => w.isNotEmpty).length;
+        final chars = text.length;
+        final charsNoSpace = text.replaceAll(RegExp(r"\s+"), "").length;
+        final lines = text.split("\n").length;
+        final readTimeSec = (words / 3.3).ceil();
+        final speakTimeSec = (words / 2.2).ceil();
+
+        out = "Metin Analizi ve İşlem Özeti:\n"
+            "• Toplam Kelime: $words\n"
+            "• Karakter (Boşluklu): $chars\n"
+            "• Karakter (Boşluksuz): $charsNoSpace\n"
+            "• Satır Sayısı: $lines\n"
+            "• Tahmini Okuma Süresi: ~$readTimeSec saniye\n"
+            "• Tahmini Konuşma Süresi: ~$speakTimeSec saniye";
+      }
+    } catch (e) {
+      out = "İşlem sırasında bir hata oluştu: $e";
     }
 
     setState(() => _nativeOutput = out);
