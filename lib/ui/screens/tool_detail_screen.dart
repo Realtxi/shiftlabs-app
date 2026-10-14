@@ -1,4 +1,6 @@
 import "dart:convert";
+import "dart:math" as math;
+import "package:crypto/crypto.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:google_fonts/google_fonts.dart";
@@ -36,16 +38,25 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
   }
 
   void _initializeDefaultInput() {
-    if (widget.tool.slug == "rot13-cipher") {
+    final slug = widget.tool.slug;
+    if (slug == "rot13-cipher") {
       _inputController.text = "Shiftlabs Ultra Hızlı Araçlar";
-      _runNativeRunner();
-    } else if (widget.tool.slug.contains("base64")) {
+    } else if (slug.contains("base64")) {
       _inputController.text = "Shiftlabs Cross-Platform Suite v2.0";
-      _runNativeRunner();
+    } else if (slug.contains("sha") || slug.contains("md5") || slug.contains("hash") || slug.contains("password")) {
+      _inputController.text = "Shiftlabs2026!SecKey";
+    } else if (slug.contains("csv")) {
+      _inputController.text = "id,name,role\n1,Alice,Engineer\n2,Bob,Designer\n3,Charlie,Product";
+    } else if (slug.contains("loan") || slug.contains("emi")) {
+      _inputController.text = "100000 10.5 5";
+    } else if (slug.contains("tip")) {
+      _inputController.text = "120 15 3";
+    } else if (slug.contains("tweet") || slug.contains("thread")) {
+      _inputController.text = "Shiftlabs v2.0 cross-platform release is here! Experience 1,000+ client-side tools, 14 advanced production studios, and instant offline processing directly on your device with 100% privacy and zero server uploads.";
     } else {
       _inputController.text = "Shiftlabs 2026 Test Metni";
-      _runNativeRunner();
     }
+    _runNativeRunner();
   }
 
   @override
@@ -182,6 +193,144 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
             "• 30 fps: Saniyede 30 kare (Standart Video)\n"
             "• 60 fps: Saniyede 60 kare (Akıcı Oyun & Spor)\n"
             "• 120 fps: Saniyede 120 kare (Ağır Çekim Slow-Mo)";
+      } else if (slug.contains("sha256") || slug.contains("sha-256")) {
+        final digest = sha256.convert(utf8.encode(text));
+        out = "🔒 SHA-256 HASH ÇIKTISI:\n$digest\n\nUzunluk: 256 bit (${digest.toString().length} hex karakter)";
+      } else if (slug.contains("md5")) {
+        final digest = md5.convert(utf8.encode(text));
+        out = "🔒 MD5 HASH ÇIKTISI:\n$digest\n\nUzunluk: 128 bit (${digest.toString().length} hex karakter)";
+      } else if (slug.contains("sha512")) {
+        final digest = sha512.convert(utf8.encode(text));
+        out = "🔒 SHA-512 HASH ÇIKTISI:\n$digest\n\nUzunluk: 512 bit (${digest.toString().length} hex karakter)";
+      } else if (slug.contains("hmac")) {
+        final key = utf8.encode("shiftlabs-secret-key");
+        final hmacSha256 = Hmac(sha256, key);
+        final digest = hmacSha256.convert(utf8.encode(text));
+        out = "🔑 HMAC-SHA256 (Gizli Anahtar: 'shiftlabs-secret-key'):\n$digest";
+      } else if (slug.contains("password") || slug.contains("entropy")) {
+        int pool = 0;
+        if (RegExp(r'[a-z]').hasMatch(text)) {
+          pool += 26;
+        }
+        if (RegExp(r'[A-Z]').hasMatch(text)) {
+          pool += 26;
+        }
+        if (RegExp(r'[0-9]').hasMatch(text)) {
+          pool += 10;
+        }
+        if (RegExp(r'[^a-zA-Z0-9]').hasMatch(text)) {
+          pool += 33;
+        }
+        if (pool == 0) {
+          pool = 1;
+        }
+        final entropy = (text.length * (math.log(pool) / math.ln2)).round();
+        String strength = "Zayıf (Weak)";
+        if (entropy >= 80) {
+          strength = "Askeri Düzey (Military Grade / Kırılamaz)";
+        } else if (entropy >= 60) {
+          strength = "Çok Güçlü (Very Strong)";
+        } else if (entropy >= 45) {
+          strength = "Makul (Reasonable)";
+        }
+        out = "🛡️ PAROLA GÜVENLİK VE ENTROPİ ANALİZİ:\n"
+            "---------------------------------------\n"
+            "• Parola Uzunluğu: ${text.length} karakter\n"
+            "• Karakter Havuzu: $pool çeşit\n"
+            "• Bilgi Entropisi: $entropy bit\n"
+            "• Güvenlik Seviyesi: $strength\n\n"
+            "⚡ 10 Milyar Tahmin/Sn ile Kırılma Süresi:\n"
+            "${entropy > 75 ? 'Milyarlarca Yıl (Kırılamaz)' : entropy > 55 ? 'Yüzlerce Yıl' : entropy > 40 ? 'Birkaç Hafta' : 'Anında / Birkaç Saniye'}";
+      } else if (slug.contains("csv") && slug.contains("json")) {
+        final lines = text.trim().split("\n").map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+        if (lines.length > 1) {
+          final headers = lines[0].split(",").map((h) => h.trim()).toList();
+          final list = <Map<String, String>>[];
+          for (int i = 1; i < lines.length; i++) {
+            final row = lines[i].split(",").map((c) => c.trim()).toList();
+            final map = <String, String>{};
+            for (int j = 0; j < headers.length; j++) {
+              map[headers[j]] = j < row.length ? row[j] : "";
+            }
+            list.add(map);
+          }
+          out = "📊 CSV -> JSON DÖNÜŞTÜRÜCÜ:\n\n${const JsonEncoder.withIndent("  ").convert(list)}";
+        } else {
+          out = "Lütfen başlık ve veri satırları içeren geçerli CSV girin.";
+        }
+      } else if (slug.contains("loan") || slug.contains("emi")) {
+        final nums = RegExp(r'[\d\.]+').allMatches(text).map((m) => double.tryParse(m.group(0) ?? "")).whereType<double>().toList();
+        if (nums.length >= 3) {
+          final p = nums[0];
+          final annualRate = nums[1];
+          final years = nums[2];
+          final r = (annualRate / 100) / 12;
+          final n = years * 12;
+          final emi = (p * r * math.pow(1 + r, n)) / (math.pow(1 + r, n) - 1);
+          final totalPayment = emi * n;
+          final totalInterest = totalPayment - p;
+          out = "💰 KREDİ & TAKSİT (EMI) HESAPLAMASI:\n"
+              "------------------------------------\n"
+              "• Ana Para: ${p.toStringAsFixed(2)}\n"
+              "• Faiz Oranı: %${annualRate.toStringAsFixed(2)}\n"
+              "• Vade: ${years.toInt()} Yıl (${n.toInt()} Ay)\n\n"
+              "📌 AYLIK TAKSİT: ${emi.toStringAsFixed(2)}\n"
+              "• Toplam Geri Ödeme: ${totalPayment.toStringAsFixed(2)}\n"
+              "• Toplam Ödenecek Faiz: ${totalInterest.toStringAsFixed(2)}";
+        } else {
+          out = "Format: [AnaPara] [Faiz%] [VadeYıl]\nÖrnek: 100000 10.5 5";
+        }
+      } else if (slug.contains("tip")) {
+        final nums = RegExp(r'[\d\.]+').allMatches(text).map((m) => double.tryParse(m.group(0) ?? "")).whereType<double>().toList();
+        if (nums.isNotEmpty) {
+          final bill = nums[0];
+          final tipPct = nums.length > 1 ? nums[1] : 15.0;
+          final people = nums.length > 2 ? nums[2].toInt().clamp(1, 100) : 1;
+          final tipAmount = bill * (tipPct / 100);
+          final total = bill + tipAmount;
+          out = "🍽️ BAHŞİŞ & HESAP BÖLÜŞTÜRÜCÜ:\n"
+              "-----------------------------\n"
+              "• Hesap: ${bill.toStringAsFixed(2)}\n"
+              "• Bahşiş: %${tipPct.toStringAsFixed(1)} (${tipAmount.toStringAsFixed(2)})\n"
+              "• Toplam: ${total.toStringAsFixed(2)}\n"
+              "• Kişi Sayısı: $people\n\n"
+              "📌 KİŞİ BAŞI: ${(total / people).toStringAsFixed(2)}";
+        } else {
+          out = "Format: [HesapTutarı] [Bahşiş%] [KişiSayısı]\nÖrnek: 120 15 3";
+        }
+      } else if (slug.contains("tweet") || slug.contains("thread")) {
+        final words = text.split(" ");
+        final tweets = <String>[];
+        String current = "";
+        for (var w in words) {
+          if ("$current $w".trim().length > 260) {
+            tweets.add(current.trim());
+            current = w;
+          } else {
+            current = "$current $w".trim();
+          }
+        }
+        if (current.isNotEmpty) {
+          tweets.add(current);
+        }
+        final threadList = tweets.asMap().entries.map((e) => "[${e.key + 1}/${tweets.length}]\n${e.value}").join("\n\n---\n\n");
+        out = "🐦 TWITTER / X THREAD (${tweets.length} Tweet):\n\n$threadList";
+      } else if (slug.contains("dockerfile")) {
+        out = "🐳 OPTİMİZE DOCKERFILE ŞABLONU:\n\n"
+            "# Multi-stage build\n"
+            "FROM node:20-alpine AS builder\n"
+            "WORKDIR /app\n"
+            "COPY package*.json ./\n"
+            "RUN npm ci\n"
+            "COPY . .\n"
+            "RUN npm run build\n\n"
+            "# Production Runner\n"
+            "FROM node:20-alpine AS runner\n"
+            "WORKDIR /app\n"
+            "ENV NODE_ENV=production\n"
+            "COPY --from=builder /app ./ \n"
+            "EXPOSE 3000\n"
+            "CMD [\"npm\", \"start\"]";
       } else {
         // General stats & preview runner
         final words = text.trim().split(RegExp(r"\s+")).where((w) => w.isNotEmpty).length;

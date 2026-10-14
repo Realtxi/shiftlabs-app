@@ -136,8 +136,8 @@ class AdaptiveScaffold extends StatelessWidget {
                       ),
                       _buildSidebarItem(
                         icon: Icons.movie_filter_rounded,
-                        title: "Shiftlabs Studio",
-                        badge: "PRO",
+                        title: isEn ? "Studios & Labs" : "Stüdyolar & Lab",
+                        badge: "14 PRO",
                         badgeColor: AppColors.secondary,
                         index: 1,
                       ),
@@ -206,8 +206,8 @@ class AdaptiveScaffold extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           isEn
-                              ? "227+ client-side tools running 100% in browser & desktop."
-                              : "227+ araç %100 çevrimdışı ve tarayıcıda çalışır.",
+                              ? "1,000+ client-side tools & 14 Studios running 100% offline & browser."
+                              : "1.000+ araç & 14 Pro Stüdyo %100 çevrimdışı ve tarayıcıda çalışır.",
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 10.5,
                             color: AppColors.textMuted,
@@ -372,9 +372,9 @@ class AdaptiveScaffold extends StatelessWidget {
               icon: const Icon(Icons.grid_view_rounded),
               label: isEn ? "Tools" : "Araçlar",
             ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.movie_filter_rounded),
-              label: "Studio",
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.movie_filter_rounded),
+              label: isEn ? "Studios" : "Stüdyolar",
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.star_rounded),

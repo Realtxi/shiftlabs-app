@@ -83,6 +83,16 @@ class IconMapper {
           return Icons.insights_rounded;
         case "database":
           return Icons.storage_rounded;
+        case "table":
+        case "tablechart":
+          return Icons.table_chart_rounded;
+        case "chart":
+        case "barchart":
+        case "bar-chart":
+          return Icons.bar_chart_rounded;
+        case "piechart":
+        case "pie-chart":
+          return Icons.pie_chart_rounded;
         case "box":
           return Icons.view_in_ar_rounded;
         case "server":
@@ -96,6 +106,8 @@ class IconMapper {
           return Icons.contact_page_rounded;
         case "film":
           return Icons.movie_filter_rounded;
+        case "network":
+          return Icons.hub_rounded;
       }
     }
 

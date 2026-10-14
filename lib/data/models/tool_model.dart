@@ -68,6 +68,25 @@ class ShiftTool {
 
   String getWebUrl(String langCode) {
     final lang = langCode == "en" ? "en" : "tr";
+    const specialRoutes = [
+      "studio",
+      "drop",
+      "pdf",
+      "audio",
+      "code",
+      "qr-hub",
+      "design",
+      "api-lab",
+      "batch",
+      "data",
+      "3d",
+      "vault",
+      "record",
+      "network",
+    ];
+    if (specialRoutes.contains(slug)) {
+      return "https://shiftlabs.co/$lang/$slug";
+    }
     return "https://shiftlabs.co/$lang/tools/$category/$slug";
   }
 }
