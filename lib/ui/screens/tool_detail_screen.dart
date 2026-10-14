@@ -52,7 +52,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     } else if (slug.contains("tip")) {
       _inputController.text = "120 15 3";
     } else if (slug.contains("tweet") || slug.contains("thread")) {
-      _inputController.text = "Shiftlabs v2.0 cross-platform release is here! Experience 1,000+ client-side tools, 14 advanced production studios, and instant offline processing directly on your device with 100% privacy and zero server uploads.";
+      _inputController.text = "Shiftlabs v2.0 cross-platform release is here! Experience 2,000+ client-side tools, 14 advanced production studios, and instant offline processing directly on your device with 100% privacy and zero server uploads.";
     } else {
       _inputController.text = "Shiftlabs 2026 Test Metni";
     }

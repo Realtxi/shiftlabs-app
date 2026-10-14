@@ -206,8 +206,8 @@ class AdaptiveScaffold extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           isEn
-                              ? "1,000+ client-side tools & 14 Studios running 100% offline & browser."
-                              : "1.000+ araç & 14 Pro Stüdyo %100 çevrimdışı ve tarayıcıda çalışır.",
+                              ? "2,000+ client-side tools & 14 Studios running 100% offline & browser."
+                              : "2.000+ araç & 14 Pro Stüdyo %100 çevrimdışı ve tarayıcıda çalışır.",
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 10.5,
                             color: AppColors.textMuted,
