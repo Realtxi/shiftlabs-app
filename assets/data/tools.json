@@ -1,5 +1,16 @@
 [
   {
+    "id": "ai-prompt-cost-calculator",
+    "slug": "ai-prompt-cost-calculator",
+    "category": "developer",
+    "icon": "Cpu",
+    "titleTr": "AI Prompt Token ve API Maliyet Hesaplayıcı (GPT-4o, Claude 3.5, Gemini, DeepSeek)",
+    "titleEn": "AI Prompt Token & API Cost Calculator (GPT-4o, Claude 3.5, Gemini, DeepSeek)",
+    "subtitleTr": "Prompt metninizin BPE token sayısını hesaplayın ve OpenAI, Anthropic, Google Gemini ve DeepSeek modellerinin tek istek ve 100.000 istek maliyetlerini karşılaştırın.",
+    "subtitleEn": "Estimate BPE token counts for your prompts and compare single-request and 100k-request API costs across OpenAI, Anthropic, Google Gemini, and DeepSeek models.",
+    "badge": "AI & DEV"
+  },
+  {
     "id": "rot13-cipher",
     "slug": "rot13-cipher",
     "category": "text",

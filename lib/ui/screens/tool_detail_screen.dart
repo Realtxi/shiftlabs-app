@@ -6,7 +6,6 @@ import "package:flutter/services.dart";
 import "package:google_fonts/google_fonts.dart";
 import "../../core/theme/app_theme.dart";
 import "../../core/utils/icon_mapper.dart";
-import "../../core/utils/url_utils.dart";
 import "../../data/models/tool_model.dart";
 
 class ToolDetailScreen extends StatefulWidget {
@@ -39,7 +38,9 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
 
   void _initializeDefaultInput() {
     final slug = widget.tool.slug;
-    if (slug == "rot13-cipher") {
+    if (slug == "ai-prompt-cost-calculator") {
+      _inputController.text = "Sen kıdemli bir yazılım mimarısın. Aşağıdaki mikroservis mimarisini yüksek erişilebilirlik, önbellekleme (Redis) ve veritabanı indeksleme açısından analiz et ve 5 maddelik aksiyon planı çıkar.";
+    } else if (slug == "rot13-cipher") {
       _inputController.text = "Shiftlabs Ultra Hızlı Araçlar";
     } else if (slug.contains("base64")) {
       _inputController.text = "Shiftlabs Cross-Platform Suite v2.0";
@@ -76,7 +77,34 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     String out = "";
 
     try {
-      if (slug.contains("json")) {
+      if (slug == "ai-prompt-cost-calculator") {
+        final words = text.trim().split(RegExp(r"\s+")).where((w) => w.isNotEmpty).length;
+        final nonAscii = RegExp(r"[^\x00-\x7F]").allMatches(text).length;
+        final estInputTokens = math.max(1, ((text.length / 3.8) + (nonAscii * 0.45)).ceil());
+        const estOutputTokens = 500;
+
+        String calcLine(String model, double inPerM, double outPerM) {
+          final singleUsd = (estInputTokens / 1e6) * inPerM + (estOutputTokens / 1e6) * outPerM;
+          final k100Usd = singleUsd * 100000;
+          return "• $model:\n"
+              "  Tek İstek: \$${singleUsd.toStringAsFixed(6)} | 100B İstek: \$${k100Usd.toStringAsFixed(2)}";
+        }
+
+        out = "🤖 AI PROMPT TOKEN & API MALİYET ANALİZİ\n"
+            "------------------------------------------\n"
+            "• Karakter Sayısı : ${text.length}\n"
+            "• Kelime Sayısı   : $words\n"
+            "• Tahmini Girdi   : ~$estInputTokens Token (BPE Heuristik)\n"
+            "• Varsayılan Çıktı: $estOutputTokens Token\n\n"
+            "💰 MODEL BAZLI MALİYET TABLOSU:\n"
+            "${calcLine('GPT-4o (OpenAI)', 2.50, 10.00)}\n"
+            "${calcLine('GPT-4o-mini (OpenAI)', 0.15, 0.60)}\n"
+            "${calcLine('Claude 3.5 Sonnet', 3.00, 15.00)}\n"
+            "${calcLine('Claude 3.5 Haiku', 0.80, 4.00)}\n"
+            "${calcLine('Gemini 1.5 Pro', 1.25, 5.00)}\n"
+            "${calcLine('Gemini 1.5 Flash', 0.075, 0.30)}\n"
+            "${calcLine('DeepSeek V3', 0.14, 0.28)}";
+      } else if (slug.contains("json")) {
         // Full Native JSON Formatter & Validator
         try {
           final decoded = jsonDecode(text);
@@ -491,28 +519,40 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Primary Launch Button
-            SizedBox(
+            // Integrated In-App Execution Badge
+            Container(
               width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, AppColors.secondary],
                 ),
-                icon: const Icon(Icons.rocket_launch_rounded, size: 20),
-                label: Text(
-                  isEn ? "Run Full Tool on Shiftlabs Web" : "Aracı Shiftlabs Web'de Başlat",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.5,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
-                ),
-                onPressed: () => UrlUtils.openUrl(webUrl),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      isEn
+                          ? "Fully Integrated Native Runner • Works 100% Offline"
+                          : "Uygulamaya Tam Entegre • %100 Çevrimdışı & Yerel Çalışır",
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),

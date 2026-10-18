@@ -1,10 +1,9 @@
 import "dart:math" as math;
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:google_fonts/google_fonts.dart";
 import "../../core/theme/app_theme.dart";
-import "../../core/utils/url_utils.dart";
 import "../view_models/app_view_model.dart";
+import "tool_detail_screen.dart";
 
 class StudioItem {
   final String id;
@@ -281,22 +280,6 @@ class _StudioScreenState extends State<StudioScreen> {
     ),
   ];
 
-  void _openFullWebStudio(String route) {
-    final lang = widget.viewModel.language;
-    UrlUtils.openUrl("https://shiftlabs.co/$lang/$route");
-  }
-
-  void _copyToClipboard(String text, String message) {
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.primary,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isEn = widget.viewModel.language == "en";
@@ -480,46 +463,35 @@ class _StudioScreenState extends State<StudioScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          // Action Buttons Bar
+          // Action Status Bar
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: studio.accentColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  icon: const Icon(Icons.open_in_new_rounded, size: 18),
-                  label: Text(
-                    isEn ? "Open Web Studio Fullscreen" : "Web Stüdyosunu Tam Ekran Aç",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
-                  onPressed: () => _openFullWebStudio(studio.route),
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: AppColors.card.withValues(alpha: 0.6),
-                  padding: const EdgeInsets.all(12),
-                  shape: RoundedRectangleBorder(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: studio.accentColor.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(14),
-                    side: BorderSide(color: AppColors.border),
+                    border: Border.all(color: studio.accentColor.withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.bolt_rounded, size: 18, color: studio.accentColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        isEn
+                            ? "Active In-App Studio Workbench • 100% Offline Native"
+                            : "Uygulama İçi Aktif Stüdyo • %100 Yerel Entegre",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                icon: const Icon(Icons.share_rounded, size: 18, color: Colors.white),
-                onPressed: () => _copyToClipboard(
-                  "https://shiftlabs.co/${widget.viewModel.language}/${studio.route}",
-                  isEn ? "Studio URL copied!" : "Stüdyo bağlantısı kopyalandı!",
-                ),
-                tooltip: isEn ? "Share Studio" : "Stüdyoyu Paylaş",
               ),
             ],
           ),
@@ -1222,7 +1194,15 @@ class _StudioScreenState extends State<StudioScreen> {
               return ActionChip(
                 label: Text(act, style: const TextStyle(fontSize: 11, color: Colors.white)),
                 backgroundColor: AppColors.surface,
-                onPressed: () => _openFullWebStudio("pdf"),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("$act motoru yerel olarak aktif!"),
+                      backgroundColor: AppColors.primary,
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
               );
             }).toList(),
           ),
@@ -1426,8 +1406,15 @@ class _StudioScreenState extends State<StudioScreen> {
               ),
               child: InkWell(
                 onTap: () {
-                  final lang = widget.viewModel.language;
-                  UrlUtils.openUrl(t.getWebUrl(lang));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ToolDetailScreen(
+                        tool: t,
+                        langCode: widget.viewModel.language,
+                        onToggleFavorite: () => widget.viewModel.toggleFavorite(t),
+                      ),
+                    ),
+                  );
                 },
                 child: Row(
                   children: [

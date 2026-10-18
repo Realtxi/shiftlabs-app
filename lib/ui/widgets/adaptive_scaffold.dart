@@ -54,26 +54,26 @@ class AdaptiveScaffold extends StatelessWidget {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppColors.primary, AppColors.secondary],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.35),
+                            width: 1,
                           ),
-                          borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.35),
+                              color: AppColors.primary.withValues(alpha: 0.25),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.flash_on_rounded,
-                          color: Colors.white,
-                          size: 22,
+                        clipBehavior: Clip.antiAlias,
+                        child: Image.asset(
+                          "assets/images/logo-square-dark.png",
+                          fit: BoxFit.cover,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -304,14 +304,17 @@ class AdaptiveScaffold extends StatelessWidget {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(7),
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
-                ),
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
               ),
-              child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                "assets/images/logo-square-dark.png",
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(width: 10),
             Column(
