@@ -135,6 +135,13 @@ class AdaptiveScaffold extends StatelessWidget {
                         index: 0,
                       ),
                       _buildSidebarItem(
+                        icon: Icons.business_center_rounded,
+                        title: isEn ? "Office Suite" : "Office Paketi",
+                        badge: "10 APPS",
+                        badgeColor: Colors.blue,
+                        index: 4,
+                      ),
+                      _buildSidebarItem(
                         icon: Icons.movie_filter_rounded,
                         title: isEn ? "Studios & Labs" : "Stüdyolar & Lab",
                         badge: "14 PRO",
@@ -374,6 +381,10 @@ class AdaptiveScaffold extends StatelessWidget {
             BottomNavigationBarItem(
               icon: const Icon(Icons.grid_view_rounded),
               label: isEn ? "Tools" : "Araçlar",
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.business_center_rounded),
+              label: isEn ? "Office" : "Office",
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.movie_filter_rounded),

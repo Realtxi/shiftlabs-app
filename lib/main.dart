@@ -3,6 +3,7 @@ import "core/theme/app_theme.dart";
 import "data/repositories/tool_repository.dart";
 import "data/services/storage_service.dart";
 import "ui/screens/favorites_screen.dart";
+import "ui/screens/office_suite_screen.dart";
 import "ui/screens/settings_screen.dart";
 import "ui/screens/studio_screen.dart";
 import "ui/screens/tools_catalog_screen.dart";
@@ -66,6 +67,9 @@ class ShiftlabsMainScreen extends StatelessWidget {
         break;
       case 3:
         currentBody = SettingsScreen(viewModel: viewModel);
+        break;
+      case 4:
+        currentBody = OfficeSuiteScreen(viewModel: viewModel);
         break;
       default:
         currentBody = ToolsCatalogScreen(viewModel: viewModel);
