@@ -34,8 +34,10 @@ class OfficeSuiteScreen extends StatefulWidget {
   State<OfficeSuiteScreen> createState() => _OfficeSuiteScreenState();
 }
 
-class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> {
+class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> with SingleTickerProviderStateMixin {
   int _selectedAppIndex = 0;
+  bool _isLoading = true;
+  late AnimationController _spinCtrl;
 
   // Active Doc State
   final TextEditingController _titleCtrl = TextEditingController(text: "Yeni Doküman");
@@ -45,6 +47,27 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> {
         "• MySQL bulut kasasıyla güvenli senkronizasyon\n"
         "• 10 büyük Microsoft 365 alternatifi tek çatı altında.",
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _spinCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _spinCtrl.dispose();
+    _titleCtrl.dispose();
+    _contentCtrl.dispose();
+    super.dispose();
+  }
 
   final List<OfficeAppItem> _apps = const [
     OfficeAppItem(
@@ -149,13 +172,6 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> {
     ),
   ];
 
-  @override
-  void dispose() {
-    _titleCtrl.dispose();
-    _contentCtrl.dispose();
-    super.dispose();
-  }
-
   void _saveDocument() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -174,6 +190,78 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF07080C),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RotationTransition(
+                turns: _spinCtrl,
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const SweepGradient(
+                      colors: [
+                        Colors.orange,
+                        Colors.pinkAccent,
+                        Colors.deepPurpleAccent,
+                        Colors.orange,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.pinkAccent.withValues(alpha: 0.3),
+                        blurRadius: 24,
+                        spreadRadius: 4,
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF07080C),
+                    ),
+                    child: const Icon(Icons.auto_awesome, color: Colors.white, size: 32),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "Shiftlabs Office Suite",
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "10 Office Stüdyosu Yükleniyor...",
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white60,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const SizedBox(
+                width: 140,
+                child: LinearProgressIndicator(
+                  minHeight: 3,
+                  backgroundColor: Colors.white10,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final isEn = widget.viewModel.language == "en";
     final activeApp = _apps[_selectedAppIndex];
 
@@ -294,31 +382,46 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> {
             ),
           ),
 
-          // Main In-App Workspace
+          // Main In-App Workspace with Smooth Animated Switcher
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  controller: _contentCtrl,
-                  maxLines: null,
-                  expands: true,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                    height: 1.6,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                switchInCurve: Curves.easeOut,
+                switchOutCurve: Curves.easeIn,
+                transitionBuilder: (child, anim) => FadeTransition(
+                  opacity: anim,
+                  child: ScaleTransition(
+                    scale: Tween<double>(begin: 0.98, end: 1.0).animate(anim),
+                    child: child,
                   ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "${activeApp.title} için içerik oluşturun veya not alın...",
-                    hintStyle: const TextStyle(color: AppColors.textMuted),
+                ),
+                child: KeyedSubtree(
+                  key: ValueKey<int>(_selectedAppIndex),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: TextField(
+                      controller: _contentCtrl,
+                      maxLines: null,
+                      expands: true,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        color: AppColors.textPrimary,
+                        height: 1.6,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "${activeApp.title} için içerik oluşturun veya not alın...",
+                        hintStyle: const TextStyle(color: AppColors.textMuted),
+                      ),
+                    ),
                   ),
                 ),
               ),
