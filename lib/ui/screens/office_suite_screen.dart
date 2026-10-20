@@ -188,6 +188,163 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> with SingleTicker
     );
   }
 
+  void _showAiPresentationDialog() {
+    final topicCtrl = TextEditingController(text: "Yeni Nesil Yapay Zeka Girişimi");
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.card,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(colors: [Colors.orange, Colors.pink]),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        "AI Sunum Sihirbazı",
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white60),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                "Sunum Konusu:",
+                style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: topicCtrl,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  hintText: "Örn: 2026 Mobil Sağlık Uygulaması Pitch Deck",
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ActionChip(
+                    label: const Text("🚀 AI Startup"),
+                    onPressed: () => setModalState(() => topicCtrl.text = "Yeni Nesil Yapay Zeka SaaS Girişimi"),
+                  ),
+                  ActionChip(
+                    label: const Text("📊 Finans Raporu"),
+                    onPressed: () => setModalState(() => topicCtrl.text = "2026 Q1 Şirket Finansal Büyüme Raporu"),
+                  ),
+                  ActionChip(
+                    label: const Text("🌱 Sürdürülebilirlik"),
+                    onPressed: () => setModalState(() => topicCtrl.text = "Sıfır Atık ve Yeşil Enerji Kurumsal Stratejisi"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange.shade700,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  icon: const Icon(Icons.auto_awesome, size: 18),
+                  label: const Text("Sunumu Oluştur ve Yükle", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  onPressed: () {
+                    final t = topicCtrl.text.trim();
+                    if (t.isEmpty) return;
+                    Navigator.pop(ctx);
+                    setState(() {
+                      _titleCtrl.text = t;
+                      _contentCtrl.text = """
+=== SLAYT 1: $t ===
+Alt Başlık: Geleceğin Çözümü ve Vizyoner Yaklaşım
+İçerik:
+• Hazırlayan: Shiftlabs Yapay Zeka Motoru
+• Kapsam: Stratejik Planlama ve Küresel Uygulama Modeli
+
+=== SLAYT 2: Pazar İhtiyacı ve Problem ===
+Alt Başlık: Mevcut Süreçlerin Yarattığı Kayıplar
+İçerik:
+• Geleneksel yöntemlerin karmaşık ve yüksek maliyetli olması.
+• Ekipler arası veri senkronizasyonu eksikliği.
+• Pazarın %78'i bulut tabanlı modern alternatifler talep ediyor.
+
+=== SLAYT 3: Çözümümüz ve Değer Önerimiz ===
+Alt Başlık: Hızlı, Güvenli ve Entegre Ekosistem
+İçerik:
+• %100 Tarayıcıda çalışan ve yerel güvenliği ön planda tutan mimari.
+• Sıfır kurulum maliyeti: Cihaz bağımsız tek hesapla tam erişim.
+• Operasyonel hızda 3.4 kat artış ve %40 maliyet tasarrufu.
+
+=== SLAYT 4: Büyüme Modeli ve Metrikler ===
+Alt Başlık: Gelir Kanalları ve Öngörülen Hedefler
+İçerik:
+• Hedeflenen Pazar (TAM): 2026 yılı \$120 Milyar.
+• Müşteri Memnuniyeti (CSAT): %96.8 tavsiye edilme skoru.
+• B2B abonelik ve kurumsal entegrasyonlar.
+
+=== SLAYT 5: Yol Haritası ve İletişim (CTA) ===
+Alt Başlık: Birlikte Geleceği İnşa Edelim
+İçerik:
+• Faz 1: Altyapı ve ana stüdyo entegrasyonu.
+• Faz 2: Küresel ölçeklenme ve pazara açılım.
+• İletişim: contact@shiftlabs.co • Web: shiftlabs.co
+""";
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("✨ '$t' sunumu başarıyla oluşturuldu!"),
+                        backgroundColor: Colors.orange.shade700,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showPexelsPicker() {
     final curated = [
       {
@@ -684,6 +841,18 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> with SingleTicker
                   icon: const Icon(Icons.image_outlined, size: 16),
                   label: const Text("Pexels", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   onPressed: _showPexelsPicker,
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.orange.shade400,
+                    side: BorderSide(color: Colors.orange.shade400),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.auto_awesome, size: 16),
+                  label: const Text("AI Sunum", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  onPressed: _showAiPresentationDialog,
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
