@@ -222,113 +222,271 @@ class _OfficeSuiteScreenState extends State<OfficeSuiteScreen> with SingleTicker
       },
     ];
 
+    final curatedVideos = [
+      {
+        "url": "https://static-videos.pexels.com/videos/855564/855564-hd_1920_1080_30fps.mp4",
+        "image": "https://images.pexels.com/videos/855564/pictures/preview-0.jpg",
+        "title": "İş Toplantısı & Çalışma",
+        "author": "Ruvim Miksanskiy",
+        "duration": "18s"
+      },
+      {
+        "url": "https://static-videos.pexels.com/videos/853889/853889-hd_1920_1080_25fps.mp4",
+        "image": "https://images.pexels.com/videos/853889/pictures/preview-0.jpg",
+        "title": "Ekip Beyin Fırtınası",
+        "author": "Ruvim Miksanskiy",
+        "duration": "24s"
+      },
+      {
+        "url": "https://static-videos.pexels.com/videos/3129671/3129671-hd_1920_1080_30fps.mp4",
+        "image": "https://images.pexels.com/videos/3129671/pictures/preview-0.jpg",
+        "title": "Kodlama & Yazılım",
+        "author": "Pressmaster",
+        "duration": "15s"
+      },
+      {
+        "url": "https://static-videos.pexels.com/videos/856973/856973-hd_1920_1080_25fps.mp4",
+        "image": "https://images.pexels.com/videos/856973/pictures/preview-0.jpg",
+        "title": "Finansal Analiz & Grafikler",
+        "author": "Ruvim Miksanskiy",
+        "duration": "20s"
+      },
+      {
+        "url": "https://static-videos.pexels.com/videos/7130545/7130545-hd_1920_1080_30fps.mp4",
+        "image": "https://images.pexels.com/videos/7130545/pictures/preview-0.jpg",
+        "title": "3D Akışkan Renk Dalgası",
+        "author": "Codioful",
+        "duration": "16s"
+      },
+    ];
+
+    String activeTab = "photos";
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF05A081).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.image_rounded, color: Color(0xFF05A081), size: 18),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Pexels Ücretsiz Stok Görseller",
-                      style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white60, size: 20),
-                  onPressed: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 200,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: curated.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 12),
-                itemBuilder: (context, i) {
-                  final item = curated[i];
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      setState(() {
-                        _contentCtrl.text += "\n\n![${item['title']}](${item['url']})\nFotoğraf: ${item['author']} (Pexels)\n";
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Pexels görseli dökümana eklendi!"),
-                          backgroundColor: Color(0xFF05A081),
-                          duration: Duration(seconds: 2),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF05A081).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    },
-                    child: Container(
-                      width: 170,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border),
-                        color: AppColors.surface,
+                        child: Icon(activeTab == "videos" ? Icons.videocam_rounded : Icons.image_rounded, color: const Color(0xFF05A081), size: 18),
                       ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Image.network(
-                              item["url"]!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              errorBuilder: (context, error, stackTrace) => const Center(
-                                child: Icon(Icons.image_not_supported, color: Colors.white30),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Pexels Stok Medya (Foto & Video)",
+                        style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white60, size: 20),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  ChoiceChip(
+                    label: const Text("Fotoğraflar"),
+                    selected: activeTab == "photos",
+                    selectedColor: const Color(0xFF05A081),
+                    onSelected: (val) {
+                      if (val) setModalState(() => activeTab = "photos");
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: const Text("Videolar (MP4)"),
+                    selected: activeTab == "videos",
+                    selectedColor: const Color(0xFF05A081),
+                    onSelected: (val) {
+                      if (val) setModalState(() => activeTab = "videos");
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 200,
+                child: activeTab == "videos"
+                    ? ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: curatedVideos.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, i) {
+                          final item = curatedVideos[i];
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              Navigator.pop(ctx);
+                              setState(() {
+                                _contentCtrl.text += "\n\n[Pexels Videosu: ${item['title']}]\nVideo Linki (MP4): ${item['url']}\nYapımcı: ${item['author']} (Pexels)\n";
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Pexels videosu dökümana eklendi!"),
+                                  backgroundColor: Color(0xFF05A081),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 170,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppColors.border),
+                                color: AppColors.surface,
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: Image.network(
+                                            item["image"]!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => const Center(
+                                              child: Icon(Icons.videocam_off, color: Colors.white30),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 6,
+                                          left: 6,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black.withValues(alpha: 0.7),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              item["duration"]!,
+                                              style: const TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                        const Center(
+                                          child: CircleAvatar(
+                                            radius: 16,
+                                            backgroundColor: Colors.black54,
+                                            child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item["title"]!,
+                                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          "Video: ${item['author']}",
+                                          style: const TextStyle(color: Colors.white54, fontSize: 9.5),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item["title"]!,
-                                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                          );
+                        },
+                      )
+                    : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: curated.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, i) {
+                          final item = curated[i];
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              Navigator.pop(ctx);
+                              setState(() {
+                                _contentCtrl.text += "\n\n![${item['title']}](${item['url']})\nFotoğraf: ${item['author']} (Pexels)\n";
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Pexels görseli dökümana eklendi!"),
+                                  backgroundColor: Color(0xFF05A081),
+                                  duration: Duration(seconds: 2),
                                 ),
-                                Text(
-                                  "Fotoğraf: ${item['author']}",
-                                  style: const TextStyle(color: Colors.white54, fontSize: 9.5),
-                                ),
-                              ],
+                              );
+                            },
+                            child: Container(
+                              width: 170,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppColors.border),
+                                color: AppColors.surface,
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Image.network(
+                                      item["url"]!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (context, error, stackTrace) => const Center(
+                                        child: Icon(Icons.image_not_supported, color: Colors.white30),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item["title"]!,
+                                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          "Fotoğraf: ${item['author']}",
+                                          style: const TextStyle(color: Colors.white54, fontSize: 9.5),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
