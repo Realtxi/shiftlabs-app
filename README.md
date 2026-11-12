@@ -1,17 +1,12 @@
-# shiftlabs_app
+# Shiftlabs App (Flutter Cross-Platform Suite)
 
-A new Flutter project.
+Official cross-platform mobile and desktop application for **Shiftlabs**, providing native offline tool runners, 14 Studios & Labs, and native Office Suite integration.
 
-## Getting Started
+* **Repository:** [https://github.com/Realtxi/shiftlabs-app](https://github.com/Realtxi/shiftlabs-app)
+* **Platforms:** iOS, Android, macOS, Windows
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+- **14 Studios & Labs Hub:** Complete native offline audio, video, PDF, and image utilities.
+- **Native Office Suite:** Integrated ShiftWord, ShiftGrid, and ShiftDeck with Pexels media pickers and AI presentation creator sheets.
+- **2,000+ Unified Tool Catalog:** Instant offline search, categorization, and execution via local runners.
+- **Pure Client-Side Privacy:** Zero server dependencies for local file transformations.
